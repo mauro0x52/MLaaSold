@@ -1,0 +1,98 @@
+<!doctype html>
+<html ng-app="panel">
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+		<script src="js/panel.js"></script>
+		<link rel="stylesheet" href="css/panel.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	</head>
+	<body ng-controller="panel">
+		<div class="panel">
+			<div class="row">
+				<!-- BEGIN MENU -->
+				<div class="col-md-2">
+					<h1>API</h1>
+					<ul class="menu">
+						<li ng-class="{selected : tab == 'post-model'}"><a ng-click="tab = 'post-model'">post model</a></li>
+						<li ng-class="{selected : tab == 'post-training-set'}"><a ng-click="tab = 'post-training-set'">post training set</a></li>
+						<li ng-class="{selected : tab == 'post-predictor-set'}"><a ng-click="tab = 'post-predictor-set'">post predictor set</a></li>
+						<li ng-class="{selected : tab == 'get-predicted-data'}"><a ng-click="tab = 'get-predicted-data'">get predicted data</a></li>
+					</ul>
+				</div>
+				<!-- END MENU -->
+				<!-- BEGIN FORMS -->
+				<div class="col-md-5">
+					<div ng-show="tab == 'post-model'">
+						<h1>Post Model</h1>
+						<h2>post /models</h2>
+						<div class="form-group">
+							<label for="formsPostModelData">Data</label>
+							<textarea id="formsPostModelData" ng-model="forms.postModel.data" class="form-control" rows="12"></textarea>
+							
+							<div class="submit"><button type="submit" class="btn btn-primary" ng-click="postModel()">Post Model</button></div>
+						</div>
+					</div>
+					<div ng-show="tab == 'post-training-set'">
+						<h1>Post Training Set</h1>
+						<h2>post /models/:modelId/training-set</h2>
+						<div class="form-group">
+							<label for="formsPostTrainingSetModelId">Model ID</label>
+							<input id="formsPostTrainingSetModelId" type="text" ng-model="forms.postTrainingSet.modelId" class="form-control" />
+							
+							<label for="formsPostTrainingSetData">Data</label>
+							<textarea id="formsPostTrainingSetData" ng-model="forms.postTrainingSet.data" class="form-control" rows="12"></textarea>
+							
+							<div class="submit"><button type="submit" class="btn btn-primary" ng-click="postTrainingSet()">Post Training Set</button></div>
+						</div>
+					</div>
+					<div ng-show="tab == 'post-predictor-set'">
+						<h1>Post Predictor Set</h1>
+						<h2>post /models/:modelId/predictor-set</h2>
+						<div class="form-group">
+							<label for="formsPostPredictorSetModelId">Model ID</label>
+							<input id="formsPostPredictorSetModelId" type="text" ng-model="forms.postPredictorSet.modelId" class="form-control" />
+							
+							<label for="formsPostPredictorSetData">Data</label>
+							<textarea id="formsPostPredictorSetData" ng-model="forms.postPredictorSet.data" class="form-control" rows="12"></textarea>
+							
+							<div class="submit"><button type="submit" class="btn btn-primary" ng-click="postPredictorSet()">Post Predictor Set</button></div>
+						</div>
+					</div>
+					<div ng-show="tab == 'get-predicted-data'">
+						<h1>Get Predicted Data</h1>
+						<h2>get /models/:modelId/predicted-data/:predictionId</h2>
+						<div class="form-group">							
+							<label for="formsGetPredictedDataPredictionId">Prediction ID</label>
+							<input id="formsGetPredictedDataPredictionId" type="text" ng-model="forms.getPredictedData.predictionId" class="form-control" />
+							
+							<div class="submit"><button type="submit" class="btn btn-primary" ng-click="getPredictedData()">Get Predicted Data</button></div>
+						</div>
+					</div>
+				</div>
+				<!-- END FORMS -->
+				<!-- BEGIN VISUALIATION -->
+				<div class="col-md-5">
+					<div ng-show="tab == 'post-model'">
+						<h1>Response</h1>
+						{{responses.postModel}}
+					</div>
+					<div ng-show="tab == 'post-training-set'">
+						<h1>Response</h1>
+						{{responses.postTrainingSet}}
+					</div>
+					<div ng-show="tab == 'post-predictor-set'">
+						<h1>Response</h1>
+						{{responses.postPredictorSet}}
+					</div>
+					<div ng-show="tab == 'get-predicted-data'">
+						<h1>Response</h1>
+						{{responses.getPredictedData}}
+					</div>
+				</div>
+				<!-- END VISUALIATION -->
+			</div>
+		</div>
+	</body>
+</html>

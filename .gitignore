@@ -1,0 +1,9 @@
+# Editors
+*~
+
+# Config file
+config.json
+
+# Dependency directory
+build
+node_modules

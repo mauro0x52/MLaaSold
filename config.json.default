@@ -1,0 +1,14 @@
+{
+	"servers" : {
+		"main" : {"url" : "http://localhost:7000", "port" : "7000"},
+		
+		"builder" : {"url" : "http://localhost:7300", "port" : "7300"},
+		"learner" : {"url" : "http://localhost:7301", "port" : "7301"},
+		"predictor" : {"url" : "http://localhost:7302", "port" : "7302"},
+		"predictionsServer" : {"url" : "http://localhost:7303", "port" : "7303"}
+	},
+	"algorithms" : {
+		"portPrefix" : "7900",
+		"url" : "http://localhost"
+	}
+}
