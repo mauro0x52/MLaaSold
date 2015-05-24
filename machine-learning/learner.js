@@ -8,6 +8,8 @@ var bodyparser = require('body-parser');
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended : true}));
 
+var models = {};
+
 app.post('/models/:modelId/training-set', function (req, res) {
 	res.contentType('json');
 	res.header('Access-Control-Allow-Origin', '*');
@@ -16,16 +18,26 @@ app.post('/models/:modelId/training-set', function (req, res) {
 	
 	console.log('Sending training-set to model #'+req.params.modelId);
 			
-	needle.post(config.algorithms.url + ':' + port + '/training-set', req.body, {json : true}, function (error, res2) {
+	needle.post(config.algorithms.url + ':' + port + '/training-set', req.body, {json : true, timeout : 0}, function (error, res2) {
 		if (error) {
-			res.send({error : error});
 			console.log('Error sending training-set to model #'+req.params.modelId);
 		}
 		else {
-			res.send({modelId : req.params.modelId});
+			models[req.params.modelId] = { report : res2.body.report };
 			console.log('Sent training-set to model #'+req.params.modelId);
 		}
 	});
+	
+	res.send({modelId : req.params.modelId});
+});
+
+app.get('/models/:modelId/report', function (req, res) {
+	res.contentType('json');
+	res.header('Access-Control-Allow-Origin', '*');
+	
+	console.log('Model #'+req.params.modelId+' report requested');
+	res.send({report : models[req.params.modelId].report});
+	console.log('Model #'+req.params.modelId+' report sent');
 });
 
 var server = app.listen(config.servers.learner.port);

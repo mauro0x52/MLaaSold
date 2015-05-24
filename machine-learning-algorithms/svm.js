@@ -11,6 +11,7 @@ var modelId = process.argv[2];
 var port = process.argv[3];
 
 var running = false;
+var trainning = false;
 var options = {
 	gamma : [0.125, 0.5, 1],
 	c : [8, 16, 32],
@@ -18,17 +19,24 @@ var options = {
 	normalize : true,
 	reduce : true,
 	retainedVariance : 0.995,
-	kFold: 1
+	kFold: 10
 };
+
+var report = null;
 
 var svm = null;
 
+/**
+ * Build the model
+ */
 app.post('/build', function (req, res) {
 	res.contentType('json');
 	res.header('Access-Control-Allow-Origin', '*');
 		
-	for (var i in req.body.model) {
-		options[i] = req.body.model[i];
+	if (req.body.model && req.body.model.parameters) {
+		for (var i in req.body.model.parameters) {
+			options[i] = req.body.model.parameters[i];
+		}
 	}
 	
 	svm = new Svm.EpsilonSVR(options);
@@ -38,13 +46,24 @@ app.post('/build', function (req, res) {
 	res.send({});
 });
 
+/**
+ * Check Status
+ */
 app.get('/status', function (req, res) {
 	res.contentType('json');
 	res.header('Access-Control-Allow-Origin', '*');
 	
-	res.send({status : running ? 'running' : 'idle' }); 
+	var status = 'ready';
+	
+	if (running) status = 'running';
+	else if (trainning) status = 'trainning';
+	
+	res.send({status : status}); 
 });
 
+/**
+ * Post training set and train model
+ */
 app.post('/training-set', function (req, res) {
 	res.contentType('json');
 	res.header('Access-Control-Allow-Origin', '*');
@@ -55,15 +74,22 @@ app.post('/training-set', function (req, res) {
 		trainingSet.push([req.body.data[i], req.body.results[i]]);
 	}
 		
+	trainning = true;
+	console.log('Training model #'+modelId);
+	
 	svm.train(trainingSet)
 		.spread(function (model, report) {
+			trainning = false;
 			console.log('Model #'+modelId+' trained');
+			res.send({report : report});
 		});
 	
 	
-	res.send({});
 });
 
+/**
+ * Run prediction
+ */
 app.post('/run', function (req, res) {
 	res.contentType('json');
 	res.header('Access-Control-Allow-Origin', '*');

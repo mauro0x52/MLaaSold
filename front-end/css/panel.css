@@ -22,6 +22,11 @@ ul.menu {
 	list-style: none;
 }
 
+ul.models {
+	padding: 0 0 0 15px;
+	margin: 0;
+}
+
 ul.menu li {
 	margin: 10px 0;
 }

@@ -34,7 +34,7 @@ app.post('/models', function (req, res) {
 		needle.post(config.algorithms.url + ':' + model.port + '/status', null, {json : true, timeout : 300}, function (error, res2) {
 			if (res2) {
 				clearInterval(interval);		
-				needle.post(config.algorithms.url + ':' + model.port + '/build', null, {json : true, timeout : 1000}, function (error, res3) {
+				needle.post(config.algorithms.url + ':' + model.port + '/build', req.body, {json : true, timeout : 1000}, function (error, res3) {
 					console.log('Model #'+model.modelId+' deployed on port '+model.port);
 					res.send({modelId : model.modelId});
 				});
@@ -43,6 +43,15 @@ app.post('/models', function (req, res) {
 	}, 500);
 	
 	modelsNumber++;
+});
+
+app.get('/models/:modelId/status', function (req, res) {
+	res.contentType('json');
+	res.header('Access-Control-Allow-Origin', '*');
+				
+	needle.get(config.algorithms.url + ':' + models[req.params.modelId].port + '/status', function (error, data) {
+		if (data) res.send(data.body);
+	});
 });
 
 var server = app.listen(config.servers.builder.port);

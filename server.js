@@ -33,11 +33,31 @@ app.post('/models', function (req, res) {
 	});
 });
 
+app.get('/models/:modelId/status', function (req, res) {
+	res.contentType('json');
+	res.header('Access-Control-Allow-Origin', '*');
+		
+	needle.get(config.servers.builder.url + '/models/'+req.params.modelId+'/status', function (error, res2) {
+		if (error) res.send({error : error});
+		else res.send(res2.body);
+	});
+});
+
 app.post('/models/:modelId/training-set', function (req, res) {
 	res.contentType('json');
 	res.header('Access-Control-Allow-Origin', '*');
 		
 	needle.post(config.servers.learner.url + '/models/'+req.params.modelId+'/training-set', req.body, {json : true}, function (error, res2) {
+		if (error) res.send({error : error});
+		else res.send(res2.body);
+	});
+});
+
+app.get('/models/:modelId/report', function (req, res) {
+	res.contentType('json');
+	res.header('Access-Control-Allow-Origin', '*');
+		
+	needle.get(config.servers.learner.url + '/models/'+req.params.modelId+'/report', function (error, res2) {
 		if (error) res.send({error : error});
 		else res.send(res2.body);
 	});

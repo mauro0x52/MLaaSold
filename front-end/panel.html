@@ -5,6 +5,7 @@
 		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 		<script src="js/panel.js"></script>
+		<script src="data/training-set.js"></script>
 		<link rel="stylesheet" href="css/panel.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 	</head>
@@ -17,8 +18,13 @@
 					<ul class="menu">
 						<li ng-class="{selected : tab == 'post-model'}"><a ng-click="tab = 'post-model'">post model</a></li>
 						<li ng-class="{selected : tab == 'post-training-set'}"><a ng-click="tab = 'post-training-set'">post training set</a></li>
+						<li ng-class="{selected : tab == 'get-report'}"><a ng-click="tab = 'get-report'">get report</a></li>
 						<li ng-class="{selected : tab == 'post-predictor-set'}"><a ng-click="tab = 'post-predictor-set'">post predictor set</a></li>
 						<li ng-class="{selected : tab == 'get-predicted-data'}"><a ng-click="tab = 'get-predicted-data'">get predicted data</a></li>
+					</ul>
+					<h1>Models</h1>
+					<ul class="models">
+						<li ng-repeat="model in models">#{{model.modelId}} ({{model.algorithm}}) - {{model.status}}</li>
 					</ul>
 				</div>
 				<!-- END MENU -->
@@ -29,6 +35,7 @@
 						<h2>post /models</h2>
 						<div class="form-group">
 							<label for="formsPostModelData">Data</label>
+							<p>Load: <a ng-click="loadModelInput('mlp')">MLP</a>, <a ng-click="loadModelInput('svm')">SVR</a>, <a ng-click="loadModelInput('knn')">KNN</a></p>
 							<textarea id="formsPostModelData" ng-model="forms.postModel.data" class="form-control" rows="12"></textarea>
 							
 							<div class="submit"><button type="submit" class="btn btn-primary" ng-click="postModel()">Post Model</button></div>
@@ -47,6 +54,16 @@
 							<div class="submit"><button type="submit" class="btn btn-primary" ng-click="postTrainingSet()">Post Training Set</button></div>
 						</div>
 					</div>
+					<div ng-show="tab == 'get-report'">
+						<h1>Get Report</h1>
+						<h2>post /models/:modelId/report</h2>
+						<div class="form-group">
+							<label for="formsGetReportModelId">Model ID</label>
+							<input id="formsGetReportModelId" type="text" ng-model="forms.getReport.modelId" class="form-control" />
+							
+							<div class="submit"><button type="submit" class="btn btn-primary" ng-click="getReport()">Get Report</button></div>
+						</div>
+					</div>
 					<div ng-show="tab == 'post-predictor-set'">
 						<h1>Post Predictor Set</h1>
 						<h2>post /models/:modelId/predictor-set</h2>
@@ -62,7 +79,7 @@
 					</div>
 					<div ng-show="tab == 'get-predicted-data'">
 						<h1>Get Predicted Data</h1>
-						<h2>get /models/:modelId/predicted-data/:predictionId</h2>
+						<h2>get /predictions/:predictionId</h2>
 						<div class="form-group">							
 							<label for="formsGetPredictedDataPredictionId">Prediction ID</label>
 							<input id="formsGetPredictedDataPredictionId" type="text" ng-model="forms.getPredictedData.predictionId" class="form-control" />
@@ -76,19 +93,23 @@
 				<div class="col-md-5">
 					<div ng-show="tab == 'post-model'">
 						<h1>Response</h1>
-						{{responses.postModel}}
+						<pre ng-show="responses.postModel">{{printJSON(responses.postModel)}}</pre>
 					</div>
 					<div ng-show="tab == 'post-training-set'">
 						<h1>Response</h1>
-						{{responses.postTrainingSet}}
+						<pre ng-show="responses.postTrainingSet">{{printJSON(responses.postTrainingSet)}}</pre>
+					</div>
+					<div ng-show="tab == 'get-report'">
+						<h1>Response</h1>
+						<pre ng-show="responses.getReport">{{printJSON(responses.getReport)}}</pre>
 					</div>
 					<div ng-show="tab == 'post-predictor-set'">
 						<h1>Response</h1>
-						{{responses.postPredictorSet}}
+						<pre ng-show="responses.postPredictorSet">{{printJSON(responses.postPredictorSet)}}</pre>
 					</div>
 					<div ng-show="tab == 'get-predicted-data'">
 						<h1>Response</h1>
-						{{responses.getPredictedData}}
+						<pre ng-show="responses.getPredictedData">{{printJSON(responses.getPredictedData)}}</pre>
 					</div>
 				</div>
 				<!-- END VISUALIATION -->
