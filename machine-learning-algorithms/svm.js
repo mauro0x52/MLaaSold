@@ -69,6 +69,7 @@ app.post('/training-set', function (req, res) {
 	res.header('Access-Control-Allow-Origin', '*');
 		
 	var trainingSet = [];
+	var start = new Date().getTime();
 	
 	for (var i in req.body.data) {
 		trainingSet.push([req.body.data[i], req.body.results[i]]);
@@ -81,6 +82,7 @@ app.post('/training-set', function (req, res) {
 		.spread(function (model, report) {
 			trainning = false;
 			console.log('Model #'+modelId+' trained');
+			report.time = new Date().getTime() - start;
 			res.send({report : report});
 		});
 	
@@ -99,23 +101,18 @@ app.post('/run', function (req, res) {
 	running = true;
 	
 	var data = req.body.data;
+	var start = new Date().getTime();
 	
 	prediction = [];
-	
-	console.log('data');
-	console.log(data);
-	
+		
 	for (var i in data) {
 		prediction.push(svm.predictSync(data[i]));
 	}
-	
-	console.log('prediction');
-	console.log(prediction);
-			
+				
 	running = false;
 	console.log('Model #'+modelId+' finished running');
 	
-	res.send({prediction : prediction});
+	res.send({prediction : prediction, time : new Date().getTime() - start, avgTime : (new Date().getTime() - start)/data.length});
 });
 
 var server = app.listen(port);

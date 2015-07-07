@@ -18,7 +18,9 @@ app.post('/predictions/:predictionId', function (req, res) {
 			
 	predictions.push({
 		predictionId : req.params.predictionId,
-		prediction : req.body.prediction
+		prediction : req.body.prediction,
+		time : req.body.time,
+		avgTime : req.body.avgTime
 	});
 		
 	console.log('Stored prediction #'+req.params.predictionId);

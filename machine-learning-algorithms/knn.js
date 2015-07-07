@@ -54,6 +54,8 @@ app.get('/status', function (req, res) {
 app.post('/training-set', function (req, res) {
 	res.contentType('json');
 	res.header('Access-Control-Allow-Origin', '*');
+	
+	var start = new Date().getTime();
 		
 	trainning = true;
 	console.log('Training model #'+modelId);
@@ -69,6 +71,8 @@ app.post('/training-set', function (req, res) {
 	
 	console.log('Model #'+modelId+' trained');
 	
+	knn.report.time = new Date().getTime() - start;
+	
 	res.send({report : knn.report});
 });
 
@@ -80,6 +84,8 @@ app.post('/run', function (req, res) {
 	res.header('Access-Control-Allow-Origin', '*');
 	
 	console.log('Model #'+modelId+' is running');
+	
+	var start = new Date().getTime();
 	
 	running = true;
 	
@@ -93,7 +99,7 @@ app.post('/run', function (req, res) {
 	running = false;
 	console.log('Model #'+modelId+' finished running');
 	
-	res.send({prediction : prediction});
+	res.send({prediction : prediction, time : new Date().getTime() - start, avgTime : (new Date().getTime() - start)/predictors.length});
 });
 
 var server = app.listen(port);

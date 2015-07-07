@@ -75,6 +75,8 @@ var crossvalidation = function (trainingSet, options) {
 	var dataLength = trainingSet.length;
 	var foldLength = parseInt(trainingSet.length / options.folds);
 	var validation = [];
+	var start = new Date().getTime(); 
+	
 	for (var i = 0; i < options.folds; i++) {
 		var trainingSetClone = trainingSet.slice(0);	
 		var dataFold = trainingSetClone.splice(i * foldLength, foldLength);
@@ -99,7 +101,8 @@ var crossvalidation = function (trainingSet, options) {
 		mse : sumsq/dataLength,
 		std : Math.sqrt(sumsq/dataLength),
 		mean : sum/dataLength,
-		size : dataLength
+		size : dataLength,
+		time : new Date().getTime() - start
 	};
 	return report;
 }
@@ -168,6 +171,8 @@ app.post('/run', function (req, res) {
 	
 	console.log('Model #'+modelId+' is running');
 	
+	var start = new Date().getTime();
+	
 	running = true;
 	
 	var predictors = req.body.data;
@@ -186,7 +191,7 @@ app.post('/run', function (req, res) {
 	running = false;
 	console.log('Model #'+modelId+' finished running');
 	
-	res.send({prediction : prediction});
+	res.send({prediction : prediction, time : new Date().getTime() - start, avgTime : (new Date().getTime() - start)/predictors.length});
 });
 
 var server = app.listen(port);

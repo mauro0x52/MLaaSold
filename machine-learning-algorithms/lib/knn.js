@@ -3,9 +3,8 @@ var Knn = function (options) {
 	
 	var self = this;
 	var calc = require('./calc.js');
-	self.weightFunction = options['weightFunction'] || 'gaussian';
 	self.weightFunctionSigma = options['weightFunctionSigma'] || 10;
-	self.distanceFunction = options['distanceFunction'] || 'euclidean';
+	self.weights = options['weights'] || null;
 	self.data = options['data'] || [];
 	self.results = options['results'] || [];
 	self.k = options['k'] || 3;
@@ -81,6 +80,7 @@ var Knn = function (options) {
 		var avg = 0.0;
 		var totalWeight = 0;
 		var weight;
+		var k = self.k == 0 ? self.data.length : self.k
 		
 		for (i = 0; i < self.data.length; i++) {
 			distances.push({
@@ -90,7 +90,8 @@ var Knn = function (options) {
 		}
 		
 		distances.sort(function(a, b) {return a.distance - b.distance;});
-		for (i = 0; i < Math.min(self.k, distances.length); i++) {
+				
+		for (i = 0; i < Math.min(k, distances.length); i++) {
 			if (self.maxDistance && distances[i].distance > self.maxDistance && i > 0) {
 				break;
 			}
@@ -105,21 +106,14 @@ var Knn = function (options) {
 	}
 	
 	self.getWeight = function (x) {
-		if (typeof self.weightFunction == 'function') {
-			return self.weightFunction(x);
-		} else if (self.weightFunction == 'none') {
-			return 1.0;
-		} else { // gaussian
-			return 	Math.exp(-1.*x*x/(2*self.weightFunctionSigma*self.weightFunctionSigma));
-		}
+		return 	calc.gaussian(x,self.weightFunctionSigma);
 	}
 	
 	self.getDistance = function (a,b) {
-		if (typeof self.distanceFunction == 'function') {
-			return self.distanceFunction(a,b);
-		} else if (typeof self.distanceFunction == 'string') {
-			return calc[self.distanceFunction](a,b);
-		} else {
+		if (self.weights) {
+			return calc.weightedEuclidean(a,b,self.weights);
+		}
+		else {
 			return calc.euclidean(a,b);
 		}
 	}
